@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2A1A23">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gefühlsraum">
+<title>Gefühlsraum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Aubergine-Palette: dunkler Grund wie der Anzug, Flieder als Leuchtfarbe, Knospen-Gelbgrün für Achtsamkeit */
+:root{
+  --bg:#2A1A23; --surface:#36232E; --surface-2:#452D3B; --ink:#F1E9EC; --muted:#BCA9B4; --line:#4F3745;
+  --accent:#D4B3D6; --accent-soft:#4B3048; --accent-ink:#2A1A23;
+  --warm:#E2BBDA; --warm-soft:#4D2F44; --calm:#CDCD7C; --calm-soft:#3C3A27; --danger:#F0A495;
+  --display:"Newsreader", Georgia, "Times New Roman", serif;
+  --body:"Figtree", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --r:14px; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top,0px)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+[hidden]{display:none!important}
+.wrap{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px 120px}
+h1,h2,h3{font-family:var(--display);font-weight:500;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:2rem;line-height:1.1} h2{font-size:1.4rem;line-height:1.2} h3{font-size:1.1rem}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:.85rem}
+.eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;font-weight:600;color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+.sans{font-family:var(--body);font-weight:600;font-size:1rem}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.brand{font-family:var(--display);font-style:italic;font-size:1.25rem}
+.who{border:0;background:var(--surface-2);color:var(--ink);font:600 .8rem var(--body);padding:7px 12px;border-radius:999px;cursor:pointer;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stack{display:flex;flex-direction:column;gap:14px}
+.section{display:flex;flex-direction:column;gap:12px;margin-top:22px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.banner{background:var(--accent-soft);border-radius:var(--r);padding:12px 14px;font-size:.88rem}
+.banner.err{background:var(--warm-soft);color:var(--ink)}
+.empty{color:var(--muted);text-align:center;padding:18px 8px}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 .9rem var(--body);padding:10px 16px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:none}
+.btn.small{padding:6px 12px;font-size:.8rem}
+.btn.danger{color:var(--danger);border-color:var(--danger);background:none}
+.btn:disabled{opacity:.6;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{display:flex;flex-direction:column;gap:6px;text-align:left;border:0;border-radius:var(--r);padding:16px;cursor:pointer;font:inherit;color:inherit}
+.tile .big{font-family:var(--display);font-size:2rem;line-height:1}
+.tile.feel{background:var(--warm-soft)} .tile.mind{background:var(--calm-soft)}
+.listbtn{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:12px 0;font:inherit;color:inherit;cursor:pointer}
+.listbtn:first-child{border-top:0}
+.chev{color:var(--muted)}
+.mic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+.mic svg{width:20px;height:20px}
+.mic.warm{background:var(--warm-soft);color:var(--warm)} .mic.calm{background:var(--calm-soft);color:var(--calm)}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);font-weight:700;color:var(--muted)}
+.dot{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--warm);color:var(--surface);font-size:.72rem;font-weight:700}
+.entry{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+.entry:first-child{border-top:0}
+.when{font-size:.8rem;color:var(--muted)} .when b{display:block;font-size:1rem;color:var(--ink);font-weight:600}
+.entry h3{font-family:var(--body);font-weight:600;font-size:1rem}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:.88rem;margin:6px 0 0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.pill.yes{background:var(--calm-soft);color:var(--calm)} .pill.no{background:var(--warm-soft);color:var(--warm)} .pill.ac{background:var(--accent-soft);color:var(--accent)}
+.scale{display:flex;gap:3px;align-items:center}
+.scale i{width:9px;height:9px;border-radius:2px;background:var(--surface-2)} .scale i.on{background:var(--calm)}
+form{display:flex;flex-direction:column;gap:14px}
+label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.86rem}
+label .hint{font-weight:400;color:var(--muted);font-size:.8rem}
+input,textarea,select{font:400 1rem var(--body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+textarea{min-height:76px;resize:vertical} textarea.long{min-height:220px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font:500 .85rem var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--warm);border-color:var(--warm);color:var(--surface)}
+fieldset{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+legend{font-weight:600;font-size:.86rem;margin-bottom:6px;padding:0}
+.seg-tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--surface-2);border-radius:12px;padding:3px}
+.seg-tabs button{border:0;background:none;color:var(--muted);font:600 .86rem var(--body);padding:8px 6px;border-radius:9px;cursor:pointer}
+.seg-tabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.weeknav{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px}
+.weeknav button{border:0;background:none;color:var(--ink);font:600 1.1rem var(--body);width:40px;height:36px;border-radius:999px;cursor:pointer}
+.weeknav button:disabled{opacity:.3}
+.weeknav span{font-weight:600;font-size:.9rem}
+.watch{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--warm-soft);border-radius:var(--r);padding:14px 16px}
+.watch .t{font-family:var(--display);font-size:2.2rem;line-height:1;font-variant-numeric:tabular-nums}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+.stat b{display:block;font-family:var(--display);font-size:1.6rem;font-weight:500;line-height:1.1}
+.stat span{font-size:.78rem;color:var(--muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;font-size:.8rem;min-width:860px}
+th,td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--line)}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--surface-2);font-weight:600}
+tr:last-child td{border-bottom:0}
+.media{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.media:first-child{border-top:0}
+.hw{display:flex;flex-direction:row;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);font-weight:400}
+.hw:first-child{border-top:0}
+.hw input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--accent)}
+.hw.done .t{text-decoration:line-through;color:var(--muted)}
+audio{width:100%;margin-top:8px}
+.lesson{display:flex;flex-direction:column;gap:16px;max-width:65ch}
+.lesson .lead{font-family:var(--display);font-size:1.2rem;line-height:1.45}
+.lesson h2{font-size:1.25rem;margin-top:6px}
+.lesson p{line-height:1.65;white-space:pre-line}
+.keynote{background:var(--warm-soft);border-radius:var(--r);padding:16px 18px;font-family:var(--display);font-style:italic;font-size:1.2rem;line-height:1.4}
+.keynote .eyebrow{font-style:normal;font-family:var(--body);display:block;margin-bottom:6px}
+.chat{display:flex;flex-direction:column;gap:8px}
+.day{align-self:center;font-size:.72rem;color:var(--muted);font-weight:600;margin:8px 0 2px}
+.bubble{max-width:82%;padding:10px 14px;border-radius:18px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.bubble .meta{display:block;font-size:.7rem;opacity:.75;margin-top:4px}
+.bubble.me{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:6px}
+.bubble.them{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:6px}
+.composer{position:sticky;bottom:calc(64px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:row;gap:8px;align-items:flex-end;background:var(--bg);padding-block:10px 4px}
+.composer textarea{min-height:46px;max-height:160px;border-radius:22px;padding:11px 16px}
+.composer .btn{flex:none;height:46px}
+.chat-note{font-size:.78rem;color:var(--muted);text-align:center}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tabbar .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.tab{position:relative;border:0;background:none;color:var(--muted);font:600 .68rem var(--body);display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 10px;cursor:pointer}
+.tab svg{width:22px;height:22px}
+.tab[aria-current="page"]{color:var(--accent)}
+.tab .dot{position:absolute;top:4px;left:calc(50% + 6px);min-width:17px;height:17px;font-size:.65rem;padding:0 4px}
+.toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:.88rem;z-index:20;max-width:90vw;text-align:center}
+.login{min-height:80vh;display:flex;flex-direction:column;justify-content:center;gap:22px;max-width:420px;margin:0 auto}
+.login .brand{font-size:2.6rem}
+.spinner{color:var(--muted);padding:40px 0;text-align:center}
+@media (max-width:420px){.two{grid-template-columns:1fr}h1{font-size:1.7rem}}
+@media (prefers-reduced-motion:no-preference){.view{animation:in .25s ease-out}@keyframes in{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top" id="topbar" hidden>
+    <span class="brand">Gefühlsraum</span>
+    <button class="who" id="who" type="button">Profil</button>
+  </header>
+  <main id="app"><p class="spinner">Gefühlsraum wird geladen …</p></main>
+</div>
+<nav class="tabbar" aria-label="Bereiche" id="tabbar" hidden><div class="in" id="tabs"></div></nav>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script>
+/* ===================== Verbindung ===================== */
+const SUPABASE_URL = "https://uuhzchqjcowjokmbspvj.supabase.co";
+const SUPABASE_KEY = "sb_publishable_2Fz2XLOehKwqyVzKT7aymA_lIlitkvA";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ===================== Symbole ===================== */
+const IC={
+ home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg>',
+ heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+ leaf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7.5" opacity=".55"/><path d="M12 2v2M12 20v2"/></svg>',
+ music:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>',
+ task:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 16h8"/></svg>',
+ book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6z"/><path d="M12 6v14.5"/></svg>',
+ chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg>',
+ users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg>',
+ plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+ send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-2.5-6.5z"/></svg>',
+ play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+ wave:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 12h2M8 8v8M12 5v14M16 9v6M20 11v2"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>',
+ chev:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'
+};
+const FEELINGS=["Freude","Dankbarkeit","Liebe","Ruhe","Traurigkeit","Schmerz","Wut","Ärger","Angst","Scham","Unruhe","Leere","Taubheit","Überforderung","Hilflosigkeit","Einsamkeit"];
+
+/* ===================== Hilfsfunktionen ===================== */
+const app=document.getElementById("app");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const dash=s=>s!==null&&s!==undefined&&String(s).trim()?esc(s):"–";
+const p2=n=>String(n).padStart(2,"0");
+const WD=["So","Mo","Di","Mi","Do","Fr","Sa"];
+const MONTHS=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+const DAYS=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+function iso(d){return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`}
+function parseD(s){return new Date(String(s).slice(0,10)+"T12:00:00")}
+function dShort(s){const d=parseD(s);return `${p2(d.getDate())}.${p2(d.getMonth()+1)}.`}
+function dDay(s){return WD[parseD(s).getDay()]}
+function today(){return iso(new Date())}
+function nowT(){const d=new Date();return `${p2(d.getHours())}:${p2(d.getMinutes())}`}
+function hm(t){return t?String(t).slice(0,5):""}
+function weekStart(offset=0){const d=new Date();d.setHours(12,0,0,0);const wd=(d.getDay()+6)%7;d.setDate(d.getDate()-wd+offset*7);return d}
+function weekRange(offset=0){const s=weekStart(offset);const e=new Date(s);e.setDate(e.getDate()+6);return {start:iso(s),end:iso(e),label:`${dShort(iso(s))} bis ${dShort(iso(e))}${e.getFullYear()}`}}
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>el.hidden=true,2600)}
+function safeUrl(u){return /^https:\/\//i.test(String(u||"").trim())?String(u).trim():""}
+function initials(n){return esc(String(n||"?").trim().split(/\s+/).map(x=>x[0]).slice(0,2).join("").toUpperCase())}
+function friendlyError(e){
+ const m=String(e&&e.message||e||"");
+ if(/Invalid login credentials/i.test(m))return "E-Mail oder Passwort stimmt nicht.";
+ if(/network|fetch/i.test(m))return "Keine Verbindung. Prüfe dein Internet und versuch es noch einmal.";
+ if(/JWT|session/i.test(m))return "Du wurdest abgemeldet. Bitte melde dich neu an.";
+ return "Das hat nicht geklappt: "+m;
+}
+async function q(promise){const {data,error,count}=await promise;if(error)throw error;return count!==undefined&&count!==null&&data===null?count:data}
+
+/* ===================== Zustand ===================== */
+let me=null;                 // eigenes Profil
+let view="", sub=null, learnTab="theory", weekOff=0, thread=null, coachClient=null, draft="", pollTimer=null;
+let names={};                // id -> Name (für Trainerin)
+let renderToken=0;
+
+/* ===================== Start & Anmeldung ===================== */
+async function boot(){
+ const {data:{session}}=await sb.auth.getSession();
+ if(!session){showLogin();return}
+ await loadMe(session.user);
+}
+async function loadMe(user){
+ try{
+  const {data,error}=await sb.from("profiles").select("*").eq("id",user.id).single();
+  if(error)throw error;
+  me=data;
+  document.getElementById("topbar").hidden=false;
+  document.getElementById("tabbar").hidden=false;
+  document.getElementById("who").textContent=me.display_name||"Profil";
+  if(me.role==="coach"){const {data:ps}=await sb.from("profiles").select("id,display_name,role");(ps||[]).forEach(p=>names[p.id]=p.display_name||"Ohne Namen")}
+  go(me.role==="coach"?"clients":"home");
+ }catch(e){showLogin(friendlyError(e))}
+}
+function showLogin(msg){
+ me=null;clearInterval(pollTimer);
+ document.getElementById("topbar").hidden=true;
+ document.getElementById("tabbar").hidden=true;
+ app.innerHTML=`<div class="login view">
+  <div class="stack" style="gap:8px"><span class="brand">Gefühlsraum</span><p class="muted">Dein Klientenbereich im Gefühlstraining bei Susan Nitschke.</p></div>
+  ${msg?`<div class="banner err">${esc(msg)}</div>`:""}
+  <form id="login-form" class="card">
+   <label>E-Mail<input type="email" id="l-email" autocomplete="username" required></label>
+   <label>Passwort<input type="password" id="l-pass" autocomplete="current-password" required></label>
+   <button class="btn primary" type="submit" style="align-self:flex-start">Anmelden</button>
+  </form>
+  <p class="small muted">Deinen Zugang bekommst du von Susan. Passwort vergessen? Schreib Susan kurz, sie setzt es für dich zurück.</p>
+ </div>`;
+ document.getElementById("login-form").onsubmit=async e=>{
+  e.preventDefault();const b=e.target.querySelector("button");b.disabled=true;b.textContent="Wird angemeldet …";
+  const {data,error}=await sb.auth.signInWithPassword({email:document.getElementById("l-email").value.trim(),password:document.getElementById("l-pass").value});
+  if(error){showLogin(friendlyError(error));return}
+  await loadMe(data.user);
+ };
+}
+sb.auth.onAuthStateChange(ev=>{if(ev==="SIGNED_OUT")showLogin()});
+
+/* ===================== Navigation ===================== */
+const TABS={
+ client:[["home","Heute",IC.home],["feel","Gefühle",IC.heart],["mind","Achtsamkeit",IC.leaf],["learn","Lernen",IC.book],["chat","Nachrichten",IC.chat]],
+ coach:[["clients","Klienten",IC.users],["inbox","Nachrichten",IC.chat],["ctheory","Theorie",IC.book],["cmedia","Medien",IC.music],["chw","Aufgaben",IC.task]]
+};
+let badges={};
+function renderTabs(){
+ const tabs=TABS[me.role==="coach"?"coach":"client"];
+ const active=view==="client"?"clients":view==="profile"?"":view;
+ document.getElementById("tabs").innerHTML=tabs.map(([id,l,i])=>`<button class="tab" data-tab="${id}" ${active===id?'aria-current="page"':''}>${i}<span>${l}</span>${badges[id]?`<span class="dot num">${badges[id]}</span>`:""}</button>`).join("");
+}
+document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest(".tab");if(b)go(b.dataset.tab)});
+document.getElementById("who").onclick=()=>go("profile");
+async function refreshBadges(){
+ try{
+  if(me.role==="coach"){
+   const {count}=await sb.from("messages").select("id",{count:"exact",head:true}).neq("sender_id",me.id).is("read_at",null);
+   badges={inbox:count||0};
+  }else{
+   const {count}=await sb.from("messages").select("id",{count:"exact",head:true}).eq("client_id",me.id).neq("sender_id",me.id).is("read_at",null);
+   badges={chat:count||0};
+  }
+  renderTabs();
+ }catch(e){}
+}
+function go(v,s=null){view=v;sub=s;if(v!=="feel"&&v!=="mind"&&v!=="client")weekOff=0;render();window.scrollTo(0,0)}
+async function render(){
+ const token=++renderToken;clearInterval(pollTimer);
+ renderTabs();
+ const V={home:vHome,feel:vFeel,mind:vMind,learn:vLearn,chat:vChat,profile:vProfile,
+          clients:vClients,client:vClient,inbox:vInbox,ctheory:vCTheory,cmedia:vCMedia,chw:vCHw};
+ if(!app.firstElementChild||!app.firstElementChild.classList.contains("view"))app.innerHTML='<p class="spinner">Lädt …</p>';
+ let html;
+ try{html=await (V[view]||vHome)()}catch(e){html=`<div class="view stack"><div class="banner err">${esc(friendlyError(e))}</div><button class="btn" data-reload>Noch einmal versuchen</button></div>`}
+ if(token!==renderToken)return;
+ app.innerHTML=html;
+ bind();
+ refreshBadges();
+}
+
+/* ===================== Daten lesen ===================== */
+async function getFeelings(uid,r){return q(sb.from("feelings").select("*").eq("user_id",uid).gte("entry_date",r.start).lte("entry_date",r.end).order("entry_date",{ascending:false}).order("entry_time",{ascending:false,nullsFirst:false}))}
+async function getMind(uid,r){return q(sb.from("mindfulness").select("*").eq("user_id",uid).gte("entry_date",r.start).lte("entry_date",r.end).order("entry_date",{ascending:false}).order("entry_time",{ascending:false,nullsFirst:false}))}
+async function getReview(uid,r){const {data,error}=await sb.from("week_reviews").select("*").eq("user_id",uid).eq("week_start",r.start).maybeSingle();if(error)throw error;return data}
+async function getHomework(uid){return q(sb.from("homework").select("*").eq("user_id",uid).order("done").order("created_at",{ascending:false}))}
+
+/* ===================== Bausteine ===================== */
+function weekNav(r){return `<div class="weeknav"><button data-week="-1" aria-label="Vorige Woche">‹</button><span class="num">${weekOff===0?"Diese Woche · ":""}${r.label}</span><button data-week="1" aria-label="Nächste Woche" ${weekOff>=0?"disabled":""}>›</button></div>`}
+function scale(n){let h="";for(let i=1;i<=10;i++)h+=`<i class="${i<=n?"on":""}"></i>`;return `<span class="scale" aria-label="${n} von 10">${h}</span>`}
+function delBtn(kind,id){return `<button class="btn small ghost" data-del="${kind}:${id}">Löschen</button>`}
+function feelEntry(f,own){
+ return `<article class="entry"><div class="when"><b class="num">${dShort(f.entry_date)}</b>${dDay(f.entry_date)}${f.entry_time?` · <span class="num">${hm(f.entry_time)}</span>`:""}</div>
+ <div style="min-width:0"><div class="row" style="gap:6px"><h3>${esc(f.feeling)}</h3>${f.felt==="Ja"?'<span class="pill yes">gefühlt</span>':f.felt==="Nein"?'<span class="pill no">verdrängt</span>':""}</div>
+ <dl class="kv"><dt>Auslöser</dt><dd>${dash(f.trigger)}</dd>${f.felt==="Nein"?`<dt>Verdrängt mit</dt><dd>${dash(f.suppressed)}</dd>`:""}
+ <dt>Dauer</dt><dd>${dash(f.duration)}</dd><dt>Unterstützung</dt><dd>${dash(f.support)}</dd><dt>Erkenntnis</dt><dd>${dash(f.insight)}</dd><dt>Resonanz</dt><dd>${dash(f.resonance)}</dd></dl>
+ ${own?`<div class="row" style="margin-top:6px">${delBtn("feelings",f.id)}</div>`:""}</div></article>`;
+}
+function mindEntry(m,own){
+ return `<article class="entry"><div class="when"><b class="num">${dShort(m.entry_date)}</b>${dDay(m.entry_date)}${m.entry_time?` · <span class="num">${hm(m.entry_time)}</span>`:""}</div>
+ <div style="min-width:0"><div class="row" style="gap:6px"><h3>${esc(m.exercise)}</h3>${m.start_type?`<span class="pill">${esc(m.start_type)}</span>`:""}</div>
+ <dl class="kv"><dt>Dauer</dt><dd class="num">${m.duration_min?m.duration_min+" Min.":"–"}</dd><dt>Ort</dt><dd>${dash(m.place)}</dd><dt>Anlass</dt><dd>${dash(m.reason)}</dd>
+ <dt>Dabeibleiben</dt><dd class="row" style="gap:8px">${m.stay?scale(m.stay)+`<span class="num small">${m.stay} / 10</span>`:"–"}</dd><dt>Wahrnehmung</dt><dd>${dash(m.insight)}</dd></dl>
+ ${own?`<div class="row" style="margin-top:6px">${delBtn("mindfulness",m.id)}</div>`:""}</div></article>`;
+}
+function feelTable(list){
+ const rows=[...list].reverse();
+ if(!rows.length)return `<p class="empty">In dieser Woche gibt es noch keine Einträge.</p>`;
+ return `<div class="tablewrap"><table><thead><tr><th>Datum</th><th>Uhrzeit</th><th>Gefühl</th><th>Auslöser</th><th>Gefühlt</th><th>Gefühl verdrängt</th><th>Dauer</th><th>Unterstützung</th><th>Erkenntnis / Ergebnis danach</th><th>Resonanz / Veränderung im Außen</th></tr></thead>
+ <tbody>${rows.map(f=>`<tr><td class="num">${dShort(f.entry_date)}</td><td class="num">${dash(hm(f.entry_time))}</td><td>${dash(f.feeling)}</td><td>${dash(f.trigger)}</td><td>${dash(f.felt)}</td><td>${dash(f.suppressed)}</td><td>${dash(f.duration)}</td><td>${dash(f.support)}</td><td>${dash(f.insight)}</td><td>${dash(f.resonance)}</td></tr>`).join("")}</tbody></table></div>`;
+}
+function mindSummary(list){
+ const days=new Set(list.map(m=>m.entry_date)).size, total=list.reduce((a,m)=>a+(m.duration_min||0),0), planned=list.filter(m=>m.start_type==="geplant").length;
+ return `${list.length} Übung${list.length===1?"":"en"} an ${days} Tag${days===1?"":"en"} · etwa ${Math.floor(total/60)?Math.floor(total/60)+" Std. ":""}${total%60} Min. bewusst · ${planned} geplant, ${list.length-planned} spontan`;
+}
+function reviewBlock(rv,editable){
+ const r=rv||{};
+ if(!editable){
+  if(!rv)return `<p class="empty">Für diese Woche gibt es noch keinen Rückblick.</p>`;
+  return `<dl class="kv"><dt>Mittelpunkt</dt><dd>${dash(r.focus)}</dd><dt>Unterstützt</dt><dd>${dash(r.support)}</dd><dt>Erkenntnisse</dt><dd>${dash(r.insight)}</dd><dt>Resonanz</dt><dd>${dash(r.resonance)}</dd></dl>`;
+ }
+ return `<form id="review-form">
+  <label>Im Mittelpunkt der Woche<textarea id="r-focus">${esc(r.focus)}</textarea></label>
+  <label>Was mich unterstützt hat<textarea id="r-support">${esc(r.support)}</textarea></label>
+  <label>Erkenntnisse und Ergebnis<textarea id="r-insight">${esc(r.insight)}</textarea></label>
+  <label>Resonanz im Außen<textarea id="r-resonance">${esc(r.resonance)}</textarea></label>
+  <button class="btn primary" type="submit" style="align-self:flex-start">Rückblick speichern</button></form>`;
+}
+
+/* ===================== Klientin: Heute ===================== */
+async function vHome(){
+ const r=weekRange(0);
+ const [feel,mind,hw,units,reads,unread]=await Promise.all([
+  getFeelings(me.id,r),getMind(me.id,r),getHomework(me.id),
+  q(sb.from("theory_units").select("id,title,minutes").order("created_at",{ascending:false})),
+  q(sb.from("theory_reads").select("unit_id").eq("user_id",me.id)),
+  sb.from("messages").select("id",{count:"exact",head:true}).eq("client_id",me.id).neq("sender_id",me.id).is("read_at",null)
+ ]);
+ const readSet=new Set(reads.map(x=>x.unit_id));const newUnits=units.filter(u=>!readSet.has(u.id));
+ const nMsg=unread.count||0;const open=hw.filter(h=>!h.done);
+ const d=new Date();
+ const notices=[];
+ if(nMsg)notices.push(`<button class="listbtn" data-go="chat"><span class="mic warm">${IC.chat}</span><span><span class="sans">Neue Nachricht von Susan</span><span class="small muted" style="display:block">${nMsg} ungelesen</span></span><span class="chev">${IC.chev}</span></button>`);
+ if(newUnits.length)notices.push(`<button class="listbtn" data-unit="${newUnits[0].id}"><span class="mic">${IC.book}</span><span><span class="sans">Neue Theorieeinheit</span><span class="small muted" style="display:block">${esc(newUnits[0].title)}${newUnits[0].minutes?` · ${newUnits[0].minutes} Min. Lesezeit`:""}</span></span><span class="chev">${IC.chev}</span></button>`);
+ return `<div class="view stack">
+  <p class="eyebrow">${DAYS[d.getDay()]}, ${d.getDate()}. ${MONTHS[d.getMonth()]}</p>
+  <h1>Hallo ${esc(me.display_name||"")}, wie fühlst du dich gerade?</h1>
+  <p class="muted">Halte einen Moment fest, solange er frisch ist. Tipp ins Feld und dann auf das Mikrofon der Tastatur, wenn du lieber sprichst.</p>
+  <div class="tiles">
+   <button class="tile feel" data-go="feel" data-sub="new"><span class="eyebrow">Gefühlskalender</span><span class="big num">${feel.length}</span><span class="small">Einträge diese Woche</span></button>
+   <button class="tile mind" data-go="mind" data-sub="new"><span class="eyebrow">Achtsamkeit</span><span class="big num">${mind.reduce((a,m)=>a+(m.duration_min||0),0)}</span><span class="small">Minuten diese Woche</span></button>
+  </div>
+  <div class="row"><button class="btn primary" data-go="feel" data-sub="new">${IC.plus} Gefühl eintragen</button><button class="btn" data-go="mind" data-sub="new">${IC.plus} Übung eintragen</button></div>
+  ${notices.length?`<div class="card">${notices.join("")}</div>`:""}
+  <div class="section"><div class="row between"><h2>Deine Aufgaben</h2><span class="pill">${open.length} offen</span></div>
+   <div class="card">${hw.length?hwList(hw.slice(0,4)):'<p class="empty">Gerade hast du keine Aufgaben.</p>'}</div></div>
+ </div>`;
+}
+
+/* ===================== Klientin: Gefühle ===================== */
+async function vFeel(){
+ if(sub==="new")return feelForm();
+ const r=weekRange(weekOff);
+ const list=await getFeelings(me.id,r);
+ if(sub==="table"){
+  const rv=await getReview(me.id,r);
+  return `<div class="view stack"><button class="btn ghost" data-sub="" style="align-self:flex-start">← Zurück</button>
+   <h1>Gefühlskalender der Woche</h1>${weekNav(r)}
+   <div class="card"><h2 style="font-size:1.2rem;margin-bottom:12px">Wochenrückblick</h2>${reviewBlock(rv,true)}</div>
+   <h2>Tabellarische Wochenübersicht</h2>${feelTable(list)}</div>`;
+ }
+ const felt=list.filter(f=>f.felt==="Ja").length;
+ const mins=list.map(f=>parseFloat(String(f.duration||"").replace(/[^\d,.]/g,"").replace(",","."))).filter(n=>!isNaN(n));
+ const avg=mins.length?Math.round(mins.reduce((a,b)=>a+b,0)/mins.length):0;
+ return `<div class="view stack"><h1>Gefühlskalender</h1>${weekNav(r)}
+  <div class="stats"><div class="stat"><b class="num">${list.length}</b><span>Einträge</span></div><div class="stat"><b class="num">${felt}</b><span>bewusst gefühlt</span></div><div class="stat"><b class="num">${avg?avg+" Min.":"–"}</b><span>Ø Dauer</span></div></div>
+  <div class="row"><button class="btn primary" data-sub="new">${IC.plus} Neuer Eintrag</button><button class="btn" data-sub="table">Wochenübersicht und Rückblick</button></div>
+  <div class="card">${list.map(f=>feelEntry(f,true)).join("")||'<p class="empty">In dieser Woche gibt es noch keine Einträge. Halte deinen ersten Moment fest.</p>'}</div></div>`;
+}
+function feelForm(){
+ return `<div class="view stack"><button class="btn ghost" data-sub="" style="align-self:flex-start">← Zurück</button><h1>Gefühl festhalten</h1>
+  <form id="feel-form">
+   <div class="two"><label>Datum<input type="date" id="f-date" value="${today()}" max="${today()}" required></label><label>Uhrzeit<input type="time" id="f-time" value="${nowT()}"></label></div>
+   <fieldset><legend>Gefühl</legend><div class="chips" id="f-chips">${FEELINGS.map(x=>`<button type="button" class="chip" aria-pressed="false">${x}</button>`).join("")}</div>
+    <input id="f-feeling" placeholder="oder eigene Worte, z. B. Herzschmerz" aria-label="Gefühl in eigenen Worten"></fieldset>
+   <label>Auslöser<span class="hint">Was ist passiert, kurz bevor das Gefühl kam?</span><textarea id="f-trigger"></textarea></label>
+   <fieldset><legend>Gefühlt?</legend><div class="chips"><button type="button" class="chip" data-felt="Ja" aria-pressed="true">Ja, gefühlt</button><button type="button" class="chip" data-felt="Nein" aria-pressed="false">Nein, verdrängt</button></div></fieldset>
+   <label id="f-supp-wrap" hidden>Womit verdrängt?<span class="hint">z. B. Handy, Putzen, Fernsehen</span><input id="f-suppressed"></label>
+   <fieldset><legend>Dauer</legend><div class="watch"><div><div class="eyebrow">Stoppuhr</div><div class="t" id="w-t">0:00</div></div><button type="button" class="btn primary" id="w-btn">Fühlen starten</button></div>
+    <input id="f-duration" placeholder="z. B. ca. 5 Min." aria-label="Dauer"></fieldset>
+   <label>Unterstützung<span class="hint">Was hat dir geholfen, beim Gefühl zu bleiben?</span><textarea id="f-support"></textarea></label>
+   <label>Erkenntnis / Ergebnis danach<textarea id="f-insight"></textarea></label>
+   <label>Resonanz / Veränderung im Außen<textarea id="f-resonance"></textarea></label>
+   <button class="btn primary" type="submit" style="align-self:flex-start">Eintrag speichern</button>
+  </form></div>`;
+}
+
+/* ===================== Klientin: Achtsamkeit ===================== */
+async function vMind(){
+ if(sub==="new")return mindForm();
+ const r=weekRange(weekOff);const list=await getMind(me.id,r);
+ return `<div class="view stack"><h1>Achtsamkeitskalender</h1>${weekNav(r)}
+  <p class="muted num">${mindSummary(list)}</p>
+  <div class="row"><button class="btn primary" data-sub="new">${IC.plus} Übung eintragen</button></div>
+  <div class="card">${list.map(m=>mindEntry(m,true)).join("")||'<p class="empty">In dieser Woche gibt es noch keine Übungen.</p>'}</div>
+  <p class="small muted">Dabeibleiben: 1 = leicht bei der Übung geblieben · 10 = sehr schwierig.</p></div>`;
+}
+async function mindForm(){
+ const media=await q(sb.from("media").select("title").order("created_at",{ascending:false}));
+ return `<div class="view stack"><button class="btn ghost" data-sub="" style="align-self:flex-start">← Zurück</button><h1>Übung eintragen</h1>
+  <form id="mind-form">
+   <div class="two"><label>Datum<input type="date" id="m-date" value="${today()}" max="${today()}" required></label><label>Uhrzeit<input type="time" id="m-time" value="${nowT()}"></label></div>
+   <div class="two"><label>Dauer in Minuten<input type="number" id="m-duration" min="1" inputmode="numeric"></label><label>Ort<input id="m-place" placeholder="z. B. Sessel am Fenster"></label></div>
+   <label>Übung<input id="m-exercise" list="m-ex" placeholder="z. B. Stille Meditation" required><datalist id="m-ex">${media.map(x=>`<option value="${esc(x.title)}">`).join("")}<option value="Stille Meditation"><option value="Fokusübung"><option value="Herzatmung"><option value="Body-Scan"></datalist></label>
+   <fieldset><legend>Beginn</legend><div class="chips"><button type="button" class="chip" data-start="geplant" aria-pressed="false">geplant</button><button type="button" class="chip" data-start="spontan" aria-pressed="true">spontan</button></div></fieldset>
+   <label>Anlass<textarea id="m-reason"></textarea></label>
+   <label>Dabeibleiben: <span id="m-stay-v" class="num">5</span> / 10<span class="hint">1 = leicht bei der Übung geblieben · 10 = sehr schwierig</span><input type="range" id="m-stay" min="1" max="10" value="5"></label>
+   <label>Wahrnehmung / Erkenntnis<textarea id="m-insight"></textarea></label>
+   <button class="btn primary" type="submit" style="align-self:flex-start">Übung speichern</button>
+  </form></div>`;
+}
+
+/* ===================== Klientin: Lernen ===================== */
+function hwList(items,coach){
+ return items.map(h=>coach
+  ?`<div class="hw ${h.done?"done":""}"><span class="pill ${h.done?"yes":""}">${h.done?"erledigt":"offen"}</span><span style="min-width:0;flex:1"><span class="t" style="font-weight:600;display:block">${esc(h.title)}</span><span class="small muted">${esc(h.note||"")}${h.due?` · ${esc(h.due)}`:""}</span></span>${delBtn("homework",h.id)}</div>`
+  :`<label class="hw ${h.done?"done":""}"><input type="checkbox" data-hw="${h.id}" ${h.done?"checked":""}><span style="min-width:0"><span class="t" style="font-weight:600;display:block">${esc(h.title)}</span><span class="small muted">${esc(h.note||"")}${h.due?` · ${esc(h.due)}`:""}</span></span></label>`).join("");
+}
+function mediaList(items,coach){
+ return items.map(m=>{
+  const link=safeUrl(m.link_url);
+  const action=m.file_path?`<button class="btn small" data-play="${m.id}" data-path="${esc(m.file_path)}">${IC.play} Abspielen</button>`:link?`<a class="btn small" href="${esc(link)}" target="_blank" rel="noopener">${IC.play} Öffnen</a>`:"";
+  return `<div class="media"><div class="mic">${m.kind==="Musik"?IC.music:IC.wave}</div><div style="min-width:0"><div class="eyebrow">${esc(m.kind)}${m.minutes?` · <span class="num">${m.minutes} Min.</span>`:""}${coach&&m.for_user?` · für ${esc(names[m.for_user]||"eine Person")}`:""}</div><h3 class="sans">${esc(m.title)}</h3>${m.description?`<p class="small muted">${esc(m.description)}</p>`:""}<div id="player-${m.id}"></div></div><div class="stack" style="gap:6px;align-items:flex-end">${action}${coach?delBtn("media",m.id):""}</div></div>`;
+ }).join("");
+}
+function parseBody(body){
+ const parts=[];let cur={h:"",p:[]};
+ String(body||"").split("\n").forEach(line=>{
+  if(/^\s*##/.test(line)){if(cur.h||cur.p.join("").trim())parts.push(cur);cur={h:line.replace(/^\s*##\s*/,""),p:[]}}
+  else cur.p.push(line);
+ });
+ if(cur.h||cur.p.join("").trim())parts.push(cur);
+ return parts.map(x=>`${x.h?`<h2>${esc(x.h)}</h2>`:""}${x.p.join("\n").split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean).map(s=>`<p>${esc(s)}</p>`).join("")}`).join("");
+}
+async function vLearn(){
+ if(sub&&sub.startsWith("u:")){
+  const id=sub.slice(2);
+  const [{data:t,error},reads]=await Promise.all([sb.from("theory_units").select("*").eq("id",id).single(),q(sb.from("theory_reads").select("unit_id").eq("user_id",me.id).eq("unit_id",id))]);
+  if(error)throw error;
+  const read=reads.length>0;
+  return `<div class="view stack"><button class="btn ghost" data-sub="" style="align-self:flex-start">← Alle Einheiten</button>
+   <article class="lesson"><span class="eyebrow">Theorie${t.minutes?` · ${t.minutes} Min. Lesezeit`:""}</span><h1>${esc(t.title)}</h1>
+   ${t.intro?`<p class="lead">${esc(t.intro)}</p>`:""}${parseBody(t.body)}
+   ${t.key_sentence?`<div class="keynote"><span class="eyebrow">Merksatz</span>${esc(t.key_sentence)}</div>`:""}</article>
+   <div class="row"><button class="btn ${read?"":"primary"}" data-read="${t.id}" data-isread="${read?1:0}">${IC.check} ${read?"Gelesen":"Als gelesen markieren"}</button>
+   <button class="btn" data-ask="${esc(t.title)}">${IC.chat} Frage dazu stellen</button></div></div>`;
+ }
+ let body="";
+ if(learnTab==="theory"){
+  const [units,reads]=await Promise.all([q(sb.from("theory_units").select("id,title,minutes").order("created_at",{ascending:false})),q(sb.from("theory_reads").select("unit_id").eq("user_id",me.id))]);
+  const rs=new Set(reads.map(x=>x.unit_id));
+  body=`<p class="muted">Kurze Einheiten zum Nachlesen, passend zu dem, was wir im Training besprechen.</p><div class="card">${units.map(t=>`<button class="listbtn" data-unit="${t.id}"><span class="mic ${rs.has(t.id)?"calm":""}">${rs.has(t.id)?IC.check:IC.book}</span><span style="min-width:0"><span class="sans" style="display:block">${esc(t.title)}</span><span class="small muted">${t.minutes?t.minutes+" Min. Lesezeit · ":""}${rs.has(t.id)?"gelesen":"neu"}</span></span><span class="chev">${IC.chev}</span></button>`).join("")||'<p class="empty">Susan hat noch keine Einheiten freigegeben.</p>'}</div>`;
+ }
+ if(learnTab==="media"){
+  const media=await q(sb.from("media").select("*").order("created_at",{ascending:false}));
+  body=`<p class="muted">Unterstützende Musik und Meditationen, wenn du ins Gefühl kommen oder zur Ruhe finden möchtest.</p><div class="card">${mediaList(media)||'<p class="empty">Hier liegen bald Meditationen und Musik von Susan.</p>'}</div>`;
+ }
+ if(learnTab==="hw"){
+  const hw=await getHomework(me.id);
+  body=`<p class="muted num">${hw.filter(h=>h.done).length} von ${hw.length} erledigt</p><div class="card">${hwList(hw)||'<p class="empty">Gerade hast du keine Aufgaben.</p>'}</div>`;
+ }
+ return `<div class="view stack"><p class="eyebrow">Von Susan für dich</p><h1>Lernen</h1>
+  <div class="seg-tabs" role="group" aria-label="Bereich"><button data-lt="theory" aria-pressed="${learnTab==="theory"}">Theorie</button><button data-lt="media" aria-pressed="${learnTab==="media"}">Mediathek</button><button data-lt="hw" aria-pressed="${learnTab==="hw"}">Aufgaben</button></div>
+  ${body}</div>`;
+}
+
+/* ===================== Nachrichten ===================== */
+async function chatView(clientId,title,eyebrow,back){
+ const msgs=await q(sb.from("messages").select("*").eq("client_id",clientId).order("created_at"));
+ const unreadIds=msgs.filter(m=>m.sender_id!==me.id&&!m.read_at).map(m=>m.id);
+ if(unreadIds.length)sb.from("messages").update({read_at:new Date().toISOString()}).in("id",unreadIds).then(()=>refreshBadges());
+ let last="";
+ const rows=msgs.map(m=>{const d=new Date(m.created_at);const day=iso(d);let sep="";if(day!==last){last=day;sep=`<div class="day">${WD[d.getDay()]}, ${dShort(day)}</div>`}
+  return `${sep}<div class="bubble ${m.sender_id===me.id?"me":"them"}">${esc(m.body)}<span class="meta num">${p2(d.getHours())}:${p2(d.getMinutes())}</span></div>`}).join("");
+ return `<div class="view stack">${back?`<button class="btn ghost" data-go="inbox" style="align-self:flex-start">← Alle Nachrichten</button>`:""}
+  <p class="eyebrow">${esc(eyebrow)}</p><h1>${esc(title)}</h1>
+  <div class="chat" id="chat" data-count="${msgs.length}">${rows||'<p class="empty">Noch keine Nachrichten. Schreib die erste.</p>'}</div>
+  ${me.role!=="coach"?`<p class="chat-note">Susan antwortet meist innerhalb von ein bis zwei Tagen. In einer akuten Krise erreichst du die Telefonseelsorge rund um die Uhr unter 0800 111 0 111.</p>`:""}
+  <form class="composer" id="chat-form" data-client="${clientId}"><textarea id="chat-input" rows="1" placeholder="Nachricht schreiben" aria-label="Nachricht">${esc(draft)}</textarea><button class="btn primary" type="submit" aria-label="Senden">${IC.send}</button></form></div>`;
+}
+function vChat(){return chatView(me.id,"Nachricht an Susan","Fragen, Gedanken, Rückmeldungen",false)}
+
+/* ===================== Profil ===================== */
+function vProfile(){
+ return `<div class="view stack"><p class="eyebrow">${me.role==="coach"?"Trainerin":"Klientin"}</p><h1>Dein Profil</h1>
+  <form id="name-form" class="card"><label>So wirst du angezeigt<input id="p-name" value="${esc(me.display_name||"")}" required maxlength="60"></label><button class="btn primary" type="submit" style="align-self:flex-start">Namen speichern</button></form>
+  <form id="pass-form" class="card"><label>Neues Passwort<span class="hint">Mindestens 8 Zeichen.</span><input type="password" id="p-pass" minlength="8" autocomplete="new-password" required></label><button class="btn" type="submit" style="align-self:flex-start">Passwort ändern</button></form>
+  <button class="btn danger" id="logout" style="align-self:flex-start">Abmelden</button></div>`;
+}
+
+/* ===================== Trainerin ===================== */
+async function clientList(){return q(sb.from("profiles").select("id,display_name").eq("role","client").order("display_name"))}
+async function vClients(){
+ const r=weekRange(0);
+ const [clients,feel,mind,hw,unread]=await Promise.all([clientList(),
+  q(sb.from("feelings").select("user_id").gte("entry_date",r.start)),q(sb.from("mindfulness").select("user_id").gte("entry_date",r.start)),
+  q(sb.from("homework").select("user_id,done")),q(sb.from("messages").select("client_id").neq("sender_id",me.id).is("read_at",null))]);
+ const cnt=(arr,id,k="user_id")=>arr.filter(x=>x[k]===id).length;
+ return `<div class="view stack"><p class="eyebrow">Trainerin · ${r.label}</p><h1>Deine Klienten</h1>
+  <div class="card">${clients.map(c=>{const n=cnt(unread,c.id,"client_id");const h=hw.filter(x=>x.user_id===c.id);
+   return `<button class="listbtn" data-client="${c.id}"><span class="avatar">${initials(c.display_name)}</span><span style="min-width:0"><span class="sans" style="display:block">${esc(c.display_name||"Ohne Namen")}</span>
+   <span class="small muted num">${cnt(feel,c.id)} Gefühle · ${cnt(mind,c.id)} Übungen diese Woche · Aufgaben ${h.filter(x=>x.done).length}/${h.length}</span></span>${n?`<span class="dot num">${n}</span>`:`<span class="chev">${IC.chev}</span>`}</button>`}).join("")||'<p class="empty">Noch keine Klienten. Lege sie in Supabase unter Authentication → Users an.</p>'}</div></div>`;
+}
+async function vClient(){
+ const id=coachClient;const r=weekRange(weekOff);
+ const [feel,mind,rv,hw]=await Promise.all([getFeelings(id,r),getMind(id,r),getReview(id,r),getHomework(id)]);
+ const tab=sub||"feel";
+ let body="";
+ if(tab==="feel")body=`<div class="card">${feel.map(f=>feelEntry(f,false)).join("")||'<p class="empty">Keine Einträge in dieser Woche.</p>'}</div><h2>Wochenrückblick</h2><div class="card">${reviewBlock(rv,false)}</div>`;
+ if(tab==="table")body=feelTable(feel);
+ if(tab==="mind")body=`<p class="muted num">${mindSummary(mind)}</p><div class="card">${mind.map(m=>mindEntry(m,false)).join("")||'<p class="empty">Keine Übungen in dieser Woche.</p>'}</div>`;
+ if(tab==="hw")body=`<div class="card">${hwList(hw,true)||'<p class="empty">Keine Aufgaben.</p>'}</div>`;
+ return `<div class="view stack"><button class="btn ghost" data-go="clients" style="align-self:flex-start">← Klienten</button>
+  <div class="row between"><h1>${esc(names[id]||"Klientin")}</h1><button class="btn small" data-thread="${id}">${IC.chat} Nachricht</button></div>
+  ${weekNav(r)}
+  <div class="stats"><div class="stat"><b class="num">${feel.length}</b><span>Gefühle</span></div><div class="stat"><b class="num">${feel.filter(f=>f.felt==="Nein").length}</b><span>verdrängt</span></div><div class="stat"><b class="num">${mind.length}</b><span>Übungen</span></div></div>
+  <div class="seg-tabs" role="group"><button data-ctab="feel" aria-pressed="${tab==="feel"}">Gefühle</button><button data-ctab="table" aria-pressed="${tab==="table"}">Tabelle</button><button data-ctab="mind" aria-pressed="${tab==="mind"}">Achtsamkeit</button><button data-ctab="hw" aria-pressed="${tab==="hw"}">Aufgaben</button></div>
+  ${body}</div>`;
+}
+async function vInbox(){
+ if(thread)return chatView(thread,names[thread]||"Klientin","Nachrichten",true);
+ const [clients,msgs]=await Promise.all([clientList(),q(sb.from("messages").select("client_id,sender_id,body,read_at,created_at").order("created_at",{ascending:false}))]);
+ return `<div class="view stack"><p class="eyebrow">Trainerin</p><h1>Nachrichten</h1><div class="card">${clients.map(c=>{const ms=msgs.filter(m=>m.client_id===c.id);const last=ms[0];const n=ms.filter(m=>m.sender_id!==me.id&&!m.read_at).length;
+  return `<button class="listbtn" data-thread="${c.id}"><span class="avatar">${initials(c.display_name)}</span><span style="min-width:0"><span class="sans" style="display:block">${esc(c.display_name||"Ohne Namen")}</span><span class="small muted" style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?(last.sender_id===me.id?"Du: ":"")+esc(last.body):"Noch keine Nachrichten"}</span></span>${n?`<span class="dot num">${n}</span>`:`<span class="chev">${IC.chev}</span>`}</button>`}).join("")||'<p class="empty">Noch keine Klienten.</p>'}</div></div>`;
+}
+function forSelect(id,clients,label="Für"){return `<label>${label}<select id="${id}"><option value="">Alle Klienten</option>${clients.map(c=>`<option value="${c.id}">${esc(c.display_name||"Ohne Namen")}</option>`).join("")}</select></label>`}
+async function vCTheory(){
+ const [units,clients]=await Promise.all([q(sb.from("theory_units").select("*").order("created_at",{ascending:false})),clientList()]);
+ return `<div class="view stack"><p class="eyebrow">Trainerin</p><h1>Theorieeinheiten</h1>
+  <div class="card">${units.map(t=>`<div class="media" style="grid-template-columns:44px 1fr auto"><span class="mic">${IC.book}</span><span style="min-width:0"><span class="sans" style="display:block">${esc(t.title)}</span><span class="small muted">${t.minutes?t.minutes+" Min. · ":""}${t.for_user?"für "+esc(names[t.for_user]||"eine Person"):"für alle"}</span></span>${delBtn("theory_units",t.id)}</div>`).join("")||'<p class="empty">Noch keine Einheiten. Schreib unten die erste.</p>'}</div>
+  <div class="section"><h2>Neue Einheit</h2>
+   <form id="theory-form" class="card">
+    <div class="two"><label>Titel<input id="t-title" required maxlength="120"></label><label>Lesezeit in Minuten<input type="number" id="t-mins" min="1" value="4"></label></div>
+    <label>Einleitung<span class="hint">Ein bis zwei Sätze, worum es geht.</span><textarea id="t-intro"></textarea></label>
+    <label>Text<span class="hint">Absätze mit einer Leerzeile trennen. Eine Zeile mit ## am Anfang wird zur Zwischenüberschrift.</span><textarea id="t-body" class="long" placeholder="## Erste Zwischenüberschrift&#10;Text des Abschnitts …"></textarea></label>
+    <label>Merksatz<input id="t-key"></label>
+    ${forSelect("t-for",clients)}
+    <button class="btn primary" type="submit" style="align-self:flex-start">Einheit freigeben</button></form></div></div>`;
+}
+async function vCMedia(){
+ const [media,clients]=await Promise.all([q(sb.from("media").select("*").order("created_at",{ascending:false})),clientList()]);
+ return `<div class="view stack"><p class="eyebrow">Trainerin</p><h1>Mediathek</h1>
+  <div class="card">${mediaList(media,true)||'<p class="empty">Noch keine Medien.</p>'}</div>
+  <div class="section"><h2>Hinzufügen</h2>
+   <form id="media-form" class="card">
+    <label>Titel<input id="u-title" required maxlength="120"></label>
+    <div class="two"><label>Art<select id="u-kind"><option>Meditation</option><option>Musik</option><option>Arbeitsblatt</option></select></label><label>Dauer in Minuten<input type="number" id="u-mins" min="1"></label></div>
+    <label>Beschreibung<textarea id="u-desc"></textarea></label>
+    <label>Eigene Aufnahme<span class="hint">Audiodatei vom iPhone oder iPad, z. B. aus der Sprachmemo-App</span><input type="file" id="u-file" accept="audio/*,application/pdf"></label>
+    <label>oder Link<span class="hint">YouTube, Spotify oder eine andere Seite (beginnt mit https://)</span><input type="url" id="u-link" placeholder="https://"></label>
+    ${forSelect("u-for",clients)}
+    <button class="btn primary" type="submit" style="align-self:flex-start">Zur Mediathek hinzufügen</button></form></div></div>`;
+}
+async function vCHw(){
+ const [clients,hw]=await Promise.all([clientList(),q(sb.from("homework").select("*").order("created_at",{ascending:false}))]);
+ return `<div class="view stack"><p class="eyebrow">Trainerin</p><h1>Hausaufgaben</h1>
+  <form id="hw-form" class="card">${forSelect("a-client",clients)}
+   <label>Aufgabe<input id="a-title" required maxlength="200"></label><label>Hinweis<textarea id="a-note"></textarea></label><label>Fällig<input id="a-due" placeholder="z. B. bis 15.11."></label>
+   <button class="btn primary" type="submit" style="align-self:flex-start">Aufgabe zuweisen</button></form>
+  ${clients.map(c=>{const list=hw.filter(h=>h.user_id===c.id);return list.length?`<h2>${esc(c.display_name||"Ohne Namen")}</h2><div class="card">${hwList(list,true)}</div>`:""}).join("")}</div>`;
+}
+
+/* ===================== Aktionen ===================== */
+let watch={on:false,start:0,h:null};
+function val(id){const el=document.getElementById(id);return el?el.value.trim():""}
+function busy(form,on){const b=form.querySelector('button[type="submit"]');if(b)b.disabled=on}
+async function act(form,fn,okMsg,after){
+ busy(form,true);
+ try{await fn();if(okMsg)toast(okMsg);if(after)after();else render()}
+ catch(e){toast(friendlyError(e));busy(form,false)}
+}
+function bind(){
+ app.querySelectorAll("[data-reload]").forEach(b=>b.onclick=()=>render());
+ app.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{if(b.dataset.go==="inbox")thread=null;go(b.dataset.go,b.dataset.sub||null)});
+ app.querySelectorAll("[data-sub]").forEach(b=>{if(!b.dataset.go)b.onclick=()=>{sub=b.dataset.sub||null;render();window.scrollTo(0,0)}});
+ app.querySelectorAll("[data-week]").forEach(b=>b.onclick=()=>{weekOff=Math.min(0,weekOff+ +b.dataset.week);render()});
+ app.querySelectorAll("[data-lt]").forEach(b=>b.onclick=()=>{learnTab=b.dataset.lt;render()});
+ app.querySelectorAll("[data-ctab]").forEach(b=>b.onclick=()=>{sub=b.dataset.ctab;render()});
+ app.querySelectorAll("[data-unit]").forEach(b=>b.onclick=()=>{view="learn";sub="u:"+b.dataset.unit;render();window.scrollTo(0,0)});
+ app.querySelectorAll("[data-client]").forEach(b=>{if(b.tagName==="BUTTON")b.onclick=()=>{coachClient=b.dataset.client;weekOff=0;view="client";sub="feel";render();window.scrollTo(0,0)}});
+ app.querySelectorAll("[data-thread]").forEach(b=>b.onclick=()=>{thread=b.dataset.thread;view="inbox";sub=null;render()});
+ app.querySelectorAll("[data-ask]").forEach(b=>b.onclick=()=>{draft=`Zu „${b.dataset.ask}“: `;go("chat")});
+ app.querySelectorAll("[data-hw]").forEach(c=>c.onchange=async()=>{
+  const {error}=await sb.from("homework").update({done:c.checked}).eq("id",c.dataset.hw);
+  if(error){toast(friendlyError(error));c.checked=!c.checked;return}
+  c.closest(".hw").classList.toggle("done",c.checked);toast(c.checked?"Erledigt":"Wieder offen");
+ });
+ app.querySelectorAll("[data-read]").forEach(b=>b.onclick=async()=>{
+  const id=b.dataset.read, isRead=b.dataset.isread==="1";
+  const {error}=isRead?await sb.from("theory_reads").delete().eq("user_id",me.id).eq("unit_id",id):await sb.from("theory_reads").upsert({user_id:me.id,unit_id:id},{onConflict:"user_id,unit_id"});
+  if(error){toast(friendlyError(error));return}
+  if(!isRead)toast("Als gelesen markiert");render();
+ });
+ app.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{
+  if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Wirklich löschen?";b.classList.add("danger");setTimeout(()=>{if(b.isConnected){b.dataset.confirm="";b.textContent="Löschen";b.classList.remove("danger")}},4000);return}
+  const [table,id]=b.dataset.del.split(":");b.disabled=true;
+  try{
+   if(table==="media"){const {data}=await sb.from("media").select("file_path").eq("id",id).single();if(data&&data.file_path)await sb.storage.from("media").remove([data.file_path])}
+   const {error}=await sb.from(table).delete().eq("id",id);if(error)throw error;
+   toast("Gelöscht");render();
+  }catch(e){toast(friendlyError(e));b.disabled=false}
+ });
+ app.querySelectorAll("[data-play]").forEach(b=>b.onclick=async()=>{
+  b.disabled=true;
+  const {data,error}=await sb.storage.from("media").createSignedUrl(b.dataset.path,3600);
+  b.disabled=false;
+  if(error){toast(friendlyError(error));return}
+  const box=document.getElementById("player-"+b.dataset.play);
+  if(/\.pdf$/i.test(b.dataset.path)){box.innerHTML=`<a class="btn small" href="${esc(data.signedUrl)}" target="_blank" rel="noopener">PDF öffnen</a>`;return}
+  box.innerHTML=`<audio controls src="${esc(data.signedUrl)}"></audio>`;box.querySelector("audio").play().catch(()=>{});
+ });
+
+ /* Gefühl speichern */
+ const ff=document.getElementById("feel-form");
+ if(ff){
+  let felt="Ja";
+  ff.querySelectorAll("#f-chips .chip").forEach(c=>c.onclick=()=>c.setAttribute("aria-pressed",c.getAttribute("aria-pressed")!=="true"));
+  ff.querySelectorAll("[data-felt]").forEach(c=>c.onclick=()=>{felt=c.dataset.felt;ff.querySelectorAll("[data-felt]").forEach(x=>x.setAttribute("aria-pressed",x===c));document.getElementById("f-supp-wrap").hidden=felt!=="Nein"});
+  const wb=document.getElementById("w-btn"),wt=document.getElementById("w-t");
+  wb.onclick=()=>{
+   if(!watch.on){watch={on:true,start:Date.now(),h:setInterval(()=>{const s=Math.floor((Date.now()-watch.start)/1000);wt.textContent=`${Math.floor(s/60)}:${p2(s%60)}`},500)};wb.textContent="Gefühl ist durch"}
+   else{clearInterval(watch.h);watch.on=false;const m=Math.max(1,Math.round((Date.now()-watch.start)/60000));document.getElementById("f-duration").value=`ca. ${m} Min.`;wb.textContent="Neu starten";toast(`Dauer übernommen: ca. ${m} Min.`)}
+  };
+  ff.onsubmit=e=>{e.preventDefault();
+   const chips=[...ff.querySelectorAll('#f-chips .chip[aria-pressed="true"]')].map(c=>c.textContent);
+   const feeling=[...chips,val("f-feeling")].filter(Boolean).join(", ");
+   if(!feeling){toast("Bitte wähle ein Gefühl oder beschreibe es.");return}
+   if(watch.on){clearInterval(watch.h);watch.on=false}
+   act(ff,async()=>{const {error}=await sb.from("feelings").insert({entry_date:val("f-date")||today(),entry_time:val("f-time")||null,feeling,trigger:val("f-trigger")||null,felt,suppressed:felt==="Nein"?val("f-suppressed")||null:null,duration:val("f-duration")||null,support:val("f-support")||null,insight:val("f-insight")||null,resonance:val("f-resonance")||null});if(error)throw error},
+    "Eintrag gespeichert",()=>{weekOff=0;sub=null;render();window.scrollTo(0,0)});
+  };
+ }
+ /* Übung speichern */
+ const mf=document.getElementById("mind-form");
+ if(mf){
+  let start="spontan";
+  mf.querySelectorAll("[data-start]").forEach(c=>c.onclick=()=>{start=c.dataset.start;mf.querySelectorAll("[data-start]").forEach(x=>x.setAttribute("aria-pressed",x===c))});
+  const st=document.getElementById("m-stay");st.oninput=()=>document.getElementById("m-stay-v").textContent=st.value;
+  mf.onsubmit=e=>{e.preventDefault();
+   act(mf,async()=>{const d=parseInt(val("m-duration"),10);const {error}=await sb.from("mindfulness").insert({entry_date:val("m-date")||today(),entry_time:val("m-time")||null,duration_min:d>0?d:null,place:val("m-place")||null,exercise:val("m-exercise"),start_type:start,reason:val("m-reason")||null,stay:+st.value,insight:val("m-insight")||null});if(error)throw error},
+    "Übung gespeichert",()=>{weekOff=0;sub=null;render();window.scrollTo(0,0)});
+  };
+ }
+ /* Wochenrückblick */
+ const rf=document.getElementById("review-form");
+ if(rf)rf.onsubmit=e=>{e.preventDefault();const r=weekRange(weekOff);
+  act(rf,async()=>{const {error}=await sb.from("week_reviews").upsert({user_id:me.id,week_start:r.start,focus:val("r-focus")||null,support:val("r-support")||null,insight:val("r-insight")||null,resonance:val("r-resonance")||null,updated_at:new Date().toISOString()},{onConflict:"user_id,week_start"});if(error)throw error},"Rückblick gespeichert",()=>busy(rf,false))};
+ /* Nachrichten */
+ const cf=document.getElementById("chat-form");
+ if(cf){
+  const ta=document.getElementById("chat-input");
+  const grow=()=>{ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,160)+"px"};
+  ta.oninput=()=>{draft=ta.value;grow()};grow();
+  if(draft){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length)}
+  cf.onsubmit=e=>{e.preventDefault();const body=ta.value.trim();if(!body)return;
+   act(cf,async()=>{const {error}=await sb.from("messages").insert({client_id:cf.dataset.client,body});if(error)throw error;draft=""},
+    me.role==="coach"?"Gesendet":"An Susan gesendet",async()=>{await render();window.scrollTo(0,document.body.scrollHeight)})};
+  requestAnimationFrame(()=>window.scrollTo(0,document.body.scrollHeight));
+  const count=+document.getElementById("chat").dataset.count;
+  pollTimer=setInterval(async()=>{
+   const {count:c}=await sb.from("messages").select("id",{count:"exact",head:true}).eq("client_id",cf.dataset.client);
+   if(c!==null&&c!==count&&!ta.value.trim())render();
+  },20000);
+ }
+ /* Profil */
+ const nf=document.getElementById("name-form");
+ if(nf)nf.onsubmit=e=>{e.preventDefault();const n=val("p-name");
+  act(nf,async()=>{const {error}=await sb.from("profiles").update({display_name:n}).eq("id",me.id);if(error)throw error;me.display_name=n;document.getElementById("who").textContent=n},"Name gespeichert",()=>busy(nf,false))};
+ const pf=document.getElementById("pass-form");
+ if(pf)pf.onsubmit=e=>{e.preventDefault();
+  act(pf,async()=>{const {error}=await sb.auth.updateUser({password:document.getElementById("p-pass").value});if(error)throw error;pf.reset()},"Passwort geändert",()=>busy(pf,false))};
+ const lo=document.getElementById("logout");
+ if(lo)lo.onclick=async()=>{await sb.auth.signOut();showLogin()};
+ /* Trainerin: Theorie */
+ const tf=document.getElementById("theory-form");
+ if(tf)tf.onsubmit=e=>{e.preventDefault();
+  act(tf,async()=>{const {error}=await sb.from("theory_units").insert({title:val("t-title"),minutes:parseInt(val("t-mins"),10)||null,intro:val("t-intro")||null,body:document.getElementById("t-body").value||null,key_sentence:val("t-key")||null,for_user:val("t-for")||null});if(error)throw error},"Einheit freigegeben")};
+ /* Trainerin: Medien */
+ const uf=document.getElementById("media-form");
+ if(uf)uf.onsubmit=e=>{e.preventDefault();
+  const file=document.getElementById("u-file").files[0];const link=val("u-link");
+  if(!file&&!link){toast("Bitte wähle eine Datei oder gib einen Link an.");return}
+  if(link&&!safeUrl(link)){toast("Der Link muss mit https:// beginnen.");return}
+  act(uf,async()=>{
+   let path=null;
+   if(file){
+    const ext=(file.name.split(".").pop()||"m4a").toLowerCase().replace(/[^a-z0-9]/g,"");
+    path=`${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    toast("Datei wird hochgeladen …");
+    const {error:ue}=await sb.storage.from("media").upload(path,file,{contentType:file.type||undefined});if(ue)throw ue;
+   }
+   const {error}=await sb.from("media").insert({title:val("u-title"),kind:val("u-kind"),minutes:parseInt(val("u-mins"),10)||null,description:val("u-desc")||null,link_url:file?null:link,file_path:path,for_user:val("u-for")||null});
+   if(error)throw error;
+  },"Zur Mediathek hinzugefügt")};
+ /* Trainerin: Aufgaben */
+ const hf=document.getElementById("hw-form");
+ if(hf)hf.onsubmit=async e=>{e.preventDefault();
+  const target=val("a-client");
+  act(hf,async()=>{
+   const ids=target?[target]:(await clientList()).map(c=>c.id);
+   if(!ids.length)throw new Error("Es gibt noch keine Klienten.");
+   const {error}=await sb.from("homework").insert(ids.map(id=>({user_id:id,title:val("a-title"),note:val("a-note")||null,due:val("a-due")||null})));if(error)throw error;
+  },"Aufgabe zugewiesen")};
+}
+
+boot().catch(e=>showLogin(friendlyError(e)));
+</script>
+</body>
+</html>
